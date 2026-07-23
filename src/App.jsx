@@ -1,33 +1,57 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import notificationData from './notifications'
+import Notification from './components/Notification'
+import NotificationList from './components/NotificationList'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [notifications, setNotifications] = useState(notificationData)
+
+  function clearNotification(id) {
+    const updatedNotifications = notifications.filter(
+      (notification) => notification.id !== id
+    )
+
+    setNotifications(updatedNotifications)
+  }
+
+  function clearAllNotifications() {
+    setNotifications([])
+  }
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <main className="app">
+      <header className="notification-header">
+        <div>
+          <h1>Notifications</h1>
+          <p>
+            {notifications.length}{' '}
+            {notifications.length === 1 ? 'notification' : 'notifications'}
+          </p>
+        </div>
+
+        <button
+          onClick={clearAllNotifications}
+          disabled={notifications.length === 0}
+        >
+          Clear All
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+      </header>
+
+      {notifications.length > 0 ? (
+        <NotificationList>
+          {notifications.map((notification) => (
+            <Notification
+              key={notification.id}
+              notification={notification}
+              onClear={clearNotification}
+            />
+          ))}
+        </NotificationList>
+      ) : (
+        <p className="empty-message">You have no notifications.</p>
+      )}
+    </main>
   )
 }
 
